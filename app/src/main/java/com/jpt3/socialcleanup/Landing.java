@@ -1,5 +1,6 @@
 package com.jpt3.socialcleanup;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,7 +11,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.tweetcomposer.TweetComposer;
+import com.twitter.sdk.android.core.services.StatusesService;
+
+import java.util.List;
 
 
 public class Landing extends ActionBarActivity {
@@ -62,9 +73,36 @@ public class Landing extends ActionBarActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_landing, container, false);
             final TextView textView = (TextView) rootView.findViewById(R.id.landing_text_view);
-            TwitterSession session = Twitter.getSessionManager().getActiveSession();
-            textView.setText(session.getUserName());
+            final TwitterSession session = Twitter.getSessionManager().getActiveSession();
+            final TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
+            final StatusesService statusesService = twitterApiClient.getStatusesService();
+            Long x = 200L;
+            statusesService.userTimeline(session.getId(), null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
+                @Override
+                public void success(Result<List<Tweet>> listResult) {
+                    System.out.println("awesome");
+                    List<Tweet> tweets = listResult.data;
+                    for(Tweet tweet: tweets){
+                        statusesService.destroy(tweet.id, false, new Callback<Tweet>() {
+                            @Override
+                            public void success(Result<Tweet> tweetResult) {
+                                System.out.print("");
+                            }
+                            @Override
+                            public void failure(TwitterException e) {
+                                System.out.print("");
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void failure(TwitterException e) {
+                    System.out.println("sweeeeeet");
+                }
+            });
             return rootView;
         }
+
     }
 }
