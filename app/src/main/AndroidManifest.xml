@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jpt3.socialcleanup" >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,7 +18,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <meta-data android:name="com.crashlytics.ApiKey" android:value="c1eade3b44b0ff56ebd5dd7634988a615cc71acc"/>
+        <activity android:name="com.twitter.sdk.android.core.identity.OAuthActivity">
+        </activity>
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="c1eade3b44b0ff56ebd5dd7634988a615cc71acc" />
+
+        <activity
+            android:name=".Landing"
+            android:label="@string/title_activity_landing" >
+        </activity>
     </application>
 
 </manifest>

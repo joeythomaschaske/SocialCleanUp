@@ -1,9 +1,11 @@
 package com.jpt3.socialcleanup;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import com.crashlytics.android.Crashlytics;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import io.fabric.sdk.android.Fabric;
@@ -25,22 +27,29 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(authConfig));
+        Fabric.with(this, new Twitter(authConfig), new Crashlytics());
         setContentView(R.layout.activity_main);
         loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
         loginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
                 // Do something with result, which provides a TwitterSession for making API calls
+                Intent LandingIntent = new Intent(MainActivity.this, Landing.class);
+                startActivity(LandingIntent);
             }
 
             @Override
             public void failure(TwitterException exception) {
-                // Do something on failure
+                System.out.print("Fukckkckc");
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        loginButton.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
