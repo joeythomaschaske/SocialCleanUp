@@ -14,6 +14,7 @@ public class DictionaryService extends SQLiteOpenHelper{
     private static final String DICTIONARY_TABLE_CREATE ="CREATE TABLE " + DICTIONARY_TABLE_NAME + " (" + KEY_WORD + " TEXT, " +KEY_DEFINITION + " TEXT);";
 
     DictionaryService(Context context){
+
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

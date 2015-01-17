@@ -1,5 +1,6 @@
 package com.jpt3.socialcleanup;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -85,30 +86,33 @@ public class Landing extends ActionBarActivity {
 
             try {
                 rootView = inflater.inflate(R.layout.fragment_landing, container, false);
-                statusesService.userTimeline(session.getId(), null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
-                    @Override
-                    public void success(Result<List<Tweet>> listResult) {
-                        List<Tweet> tweets = listResult.data;
-                        for (Tweet tweet : tweets) {
-                            statusesService.destroy(tweet.id, false, new Callback<Tweet>() {
-                                @Override
-                                public void success(Result<Tweet> tweetResult) {
+                DictionaryService ds = new DictionaryService(getActivity());
+                SQLiteDatabase db = ds.getWritableDatabase();
 
-                                }
-
-                                @Override
-                                public void failure(TwitterException e) {
-                                    Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void failure(TwitterException e) {
-                        Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
-                    }
-                });
+//                statusesService.userTimeline(session.getId(), null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
+//                    @Override
+//                    public void success(Result<List<Tweet>> listResult) {
+//                        List<Tweet> tweets = listResult.data;
+//                        for (Tweet tweet : tweets) {
+//                            statusesService.destroy(tweet.id, false, new Callback<Tweet>() {
+//                                @Override
+//                                public void success(Result<Tweet> tweetResult) {
+//
+//                                }
+//
+//                                @Override
+//                                public void failure(TwitterException e) {
+//                                    Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
+//                                }
+//                            });
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void failure(TwitterException e) {
+//                        Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
+//                    }
+//                });
             }
             catch (Exception e){
                 Fabric.getLogger().e("Landing Exception(onCreateView) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
