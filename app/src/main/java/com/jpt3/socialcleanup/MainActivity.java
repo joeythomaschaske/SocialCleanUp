@@ -18,58 +18,77 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 public class MainActivity extends ActionBarActivity {
 
-    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "5itdtl3F7tUUECjNoMPfoileR";
     private static final String TWITTER_SECRET = "tpMxSWJBehMVyNiAEfHi8isFxQ4P3ZGio0jARZ4R0cvdd9ZCvu";
     private TwitterLoginButton loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(authConfig), new Crashlytics());
-        setContentView(R.layout.activity_main);
-        loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
-        loginButton.setCallback(new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                // Do something with result, which provides a TwitterSession for making API calls
-                Intent LandingIntent = new Intent(MainActivity.this, Landing.class);
-                startActivity(LandingIntent);
-            }
+        TwitterAuthConfig authConfig = null;
 
-            @Override
-            public void failure(TwitterException exception) {
-                System.out.print("Fukckkckc");
-            }
-        });
+        try{
+            super.onCreate(savedInstanceState);
+            authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+            Fabric.with(this, new Twitter(authConfig), new Crashlytics());
+            setContentView(R.layout.activity_main);
+            loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
+            loginButton.setCallback(new Callback<TwitterSession>() {
+                @Override
+                public void success(Result<TwitterSession> result) {
+                    Intent landingIntent = new Intent(MainActivity.this, Landing.class);
+                    startActivity(landingIntent);
+                }
+
+                @Override
+                public void failure(TwitterException e) {
+                    Fabric.getLogger().e("MainActivity Exception(failure)", e.getMessage());
+                }
+            });
+        }
+        catch(Exception e){
+            Fabric.getLogger().e("MainActicivity Exception(onCreate) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
+        }
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        loginButton.onActivityResult(requestCode, resultCode, data);
+
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+            loginButton.onActivityResult(requestCode, resultCode, data);
+        }
+        catch (Exception e){
+            Fabric.getLogger().e("MainActicivity Exception(onActivityResult) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        try {
+            getMenuInflater().inflate(R.menu.menu_main, menu);
+        }
+        catch (Exception e){
+            Fabric.getLogger().e("MainActicivity Exception(onCreateOptionsMenu) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
+        }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        int id = -1;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        try {
+            id = item.getItemId();
+            if (id == R.id.action_settings) {
+                return true;
+            }
         }
-
+        catch (Exception e){
+            Fabric.getLogger().e("MainActicivity Exception(onOptionsItemSelected) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
+        }
         return super.onOptionsItemSelected(item);
     }
 }
