@@ -1,5 +1,6 @@
 package com.jpt3.socialcleanup;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -79,16 +80,21 @@ public class Landing extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            long rowID = -1;
+            ContentValues contentValues = null;
+            SQLiteDatabase db = null;
             View rootView = null;
             final TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
             final StatusesService statusesService = twitterApiClient.getStatusesService();
             final TwitterSession session = Twitter.getSessionManager().getActiveSession();
 
             try {
+                contentValues = new ContentValues();
+                contentValues.put(DictionaryService.KEY_WORD_COLUMN, "Joey was here");
                 rootView = inflater.inflate(R.layout.fragment_landing, container, false);
                 DictionaryService ds = new DictionaryService(getActivity());
-                SQLiteDatabase db = ds.getWritableDatabase();
-
+                db = ds.getWritableDatabase();
+                rowID = db.insert(DictionaryService.DICTIONARY_TABLE_NAME, null, contentValues);
 //                statusesService.userTimeline(session.getId(), null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
 //                    @Override
 //                    public void success(Result<List<Tweet>> listResult) {
