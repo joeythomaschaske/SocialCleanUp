@@ -19,7 +19,6 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.StatusesService;
-
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
@@ -80,45 +79,36 @@ public class Landing extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            long rowID = -1;
-            ContentValues contentValues = null;
-            SQLiteDatabase db = null;
-            View rootView = null;
             final TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
             final StatusesService statusesService = twitterApiClient.getStatusesService();
             final TwitterSession session = Twitter.getSessionManager().getActiveSession();
+            View rootView = null;
 
             try {
-                contentValues = new ContentValues();
-                contentValues.put(DictionaryService.KEY_WORD_COLUMN, "Joey was here");
                 rootView = inflater.inflate(R.layout.fragment_landing, container, false);
-                DictionaryService ds = new DictionaryService(getActivity());
-                db = ds.getWritableDatabase();
-                rowID = db.insert(DictionaryService.DICTIONARY_TABLE_NAME, null, contentValues);
-//                statusesService.userTimeline(session.getId(), null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
-//                    @Override
-//                    public void success(Result<List<Tweet>> listResult) {
-//                        List<Tweet> tweets = listResult.data;
-//                        for (Tweet tweet : tweets) {
-//                            statusesService.destroy(tweet.id, false, new Callback<Tweet>() {
-//                                @Override
-//                                public void success(Result<Tweet> tweetResult) {
-//
-//                                }
-//
-//                                @Override
-//                                public void failure(TwitterException e) {
-//                                    Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
-//                                }
-//                            });
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void failure(TwitterException e) {
-//                        Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
-//                    }
-//                });
+                statusesService.userTimeline(session.getId(), null, null, null, 200L, null, null, null, null, new Callback<List<Tweet>>() {
+                    @Override
+                    public void success(Result<List<Tweet>> listResult) {
+                        List<Tweet> tweets = listResult.data;
+                        for (Tweet tweet : tweets) {
+                            statusesService.destroy(tweet.id, false, new Callback<Tweet>() {
+                                @Override
+                                public void success(Result<Tweet> tweetResult) {
+
+                                }
+
+                                @Override
+                                public void failure(TwitterException e) {
+                                    Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
+                                }
+                            });
+                        }
+                    }
+                    @Override
+                    public void failure(TwitterException e) {
+                        Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
+                    }
+                });
             }
             catch (Exception e){
                 Fabric.getLogger().e("Landing Exception(onCreateView) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);

@@ -4,11 +4,21 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.jpt3.socialcleanup.Landing$PlaceholderFragment">
+    tools:context="com.jpt3.socialcleanup.Landing$PlaceholderFragment"
+    android:id="@+id/"
+    android:background="#ff38b0ff">
 
     <TextView
         android:id="@+id/landing_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear_twitter_vulgarity"
+        android:id="@+id/button"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
