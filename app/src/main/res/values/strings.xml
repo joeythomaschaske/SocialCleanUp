@@ -6,5 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_landing">Landing</string>
     <string name="clear_twitter_vulgarity">Clear Your Twitter Vulgarity</string>
+    <string name="delete_tweet">Delete This Tweet?</string>
+    <string name="view_tweet">Veiw Tweet</string>
 
 </resources>

@@ -14,6 +14,7 @@ import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.tweetui.TweetUi;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -29,7 +30,7 @@ public class MainActivity extends ActionBarActivity {
         try{
             super.onCreate(savedInstanceState);
             authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-            Fabric.with(this, new Twitter(authConfig), new Crashlytics());
+            Fabric.with(this, new Twitter(authConfig), new Crashlytics(), new TweetUi());
             setContentView(R.layout.activity_main);
             loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
             loginButton.setCallback(new Callback<TwitterSession>() {

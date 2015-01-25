@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
@@ -21,6 +22,10 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Tweet;
 import com.twitter.sdk.android.core.services.StatusesService;
+import com.twitter.sdk.android.tweetui.LoadCallback;
+import com.twitter.sdk.android.tweetui.TweetUtils;
+import com.twitter.sdk.android.tweetui.TweetView;
+
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -73,7 +78,6 @@ public class Landing extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     public static class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {
@@ -91,7 +95,7 @@ public class Landing extends ActionBarActivity {
                 clearVulgarity.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        processTweets();
                     }
                 });
             }
@@ -109,20 +113,31 @@ public class Landing extends ActionBarActivity {
             int processedTweets = -1;
 
             try {
-                statusesService.userTimeline(session.getId(), null, null, null, 200L, null, null, null, null, new Callback<List<Tweet>>() {
+                statusesService.userTimeline(session.getId(), null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
                     @Override
                     public void success(Result<List<Tweet>> listResult) {
                         DictionaryService ds = new DictionaryService(getActivity());
                         List<Tweet> tweets = listResult.data;
                         List<String> contents = ds.getAllItems();
-                        for (Tweet tweet : tweets) {
+                        for (final Tweet tweet : tweets) {
                             for (String vulgar: contents) {
                                 if (Pattern.compile(Pattern.quote(tweet.text), Pattern.CASE_INSENSITIVE).matcher(vulgar).find()) {
                                     statusesService.destroy(tweet.id, false, new Callback<Tweet>() {
-                                        int hitCount = 0;
                                         @Override
                                         public void success(Result<Tweet> tweetResult) {
+                                            TweetUtils.loadTweet(tweet.id, new LoadCallback<Tweet>() {
+                                                @Override
+                                                public void success(Tweet tweet) {
+                                                    RelativeLayout rel = (RelativeLayout) getActivity().findViewById(R.id.landing_fragment_layout);
+                                                    rel.addView(new TweetView(
+                                                            getActivity(), tweet));
+                                                }
 
+                                                @Override
+                                                public void failure(TwitterException exception) {
+                                                    // Toast.makeText(...).show();
+                                                }
+                                            });
                                         }
 
                                         @Override
