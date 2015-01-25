@@ -1,8 +1,15 @@
 package com.jpt3.socialcleanup;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 public class DictionaryService extends SQLiteOpenHelper{
 
@@ -31,5 +38,52 @@ public class DictionaryService extends SQLiteOpenHelper{
 
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public SQLiteDatabase getReadableDatabase(){
+        return this.getReadableDatabase();
+    }
+
+    public SQLiteDatabase getWritableDatabase(){
+        return this.getWritableDatabase();
+    }
+
+    public void addToDatabase(String item){
+        ContentValues contentValues = null;
+
+        try {
+            contentValues = new ContentValues();
+            contentValues.put(KEY_WORD_COLUMN, item);
+            getWritableDatabase().insert(DICTIONARY_TABLE_NAME, null, contentValues);
+        }
+        catch (Exception e){
+            Fabric.getLogger().e("Dictionary Service(addToDatabase) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
+        }
+    }
+
+    public List<String> getAllItems(){
+        String item = "";
+        String query = "";
+        List<String> contents = null;
+        Cursor cursor = null;
+        SQLiteDatabase db = null;
+
+        try{
+            query = "SELECT * FROM " + DICTIONARY_TABLE_NAME;
+            db = getReadableDatabase();
+            cursor = db.rawQuery(query, null);
+            contents = new LinkedList<>();
+            do {
+                if (cursor.moveToFirst()) {
+                    item = cursor.getString(0);
+                    contents.add(item);
+                }
+            } while (cursor.moveToNext());
+
+        }
+        catch (Exception e){
+            Fabric.getLogger().e("Dictionary Service(getAllItems) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
+        }
+        return contents;
     }
 }
