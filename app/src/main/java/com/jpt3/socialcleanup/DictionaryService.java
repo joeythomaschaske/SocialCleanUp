@@ -40,14 +40,6 @@ public class DictionaryService extends SQLiteOpenHelper{
         onUpgrade(db, oldVersion, newVersion);
     }
 
-    public SQLiteDatabase getReadableDatabase(){
-        return this.getReadableDatabase();
-    }
-
-    public SQLiteDatabase getWritableDatabase(){
-        return this.getWritableDatabase();
-    }
-
     public void addToDatabase(String item){
         ContentValues contentValues = null;
 
@@ -70,16 +62,15 @@ public class DictionaryService extends SQLiteOpenHelper{
 
         try{
             query = "SELECT * FROM " + DICTIONARY_TABLE_NAME;
-            db = getReadableDatabase();
+            db = getWritableDatabase();
             cursor = db.rawQuery(query, null);
             contents = new LinkedList<>();
-            do {
-                if (cursor.moveToFirst()) {
+            if(cursor.moveToFirst()) {
+                do {
                     item = cursor.getString(0);
                     contents.add(item);
-                }
-            } while (cursor.moveToNext());
-
+                } while (cursor.moveToNext());
+            }
         }
         catch (Exception e){
             Fabric.getLogger().e("Dictionary Service(getAllItems) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);

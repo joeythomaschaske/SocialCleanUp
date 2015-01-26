@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.twitter.sdk.android.Twitter;
@@ -113,7 +114,7 @@ public class Landing extends ActionBarActivity {
             int processedTweets = -1;
 
             try {
-                statusesService.userTimeline(session.getId(), null, null, null, null, null, null, null, null, new Callback<List<Tweet>>() {
+                statusesService.userTimeline(session.getId(), null, null, 50L, null, null, null, null, null, new Callback<List<Tweet>>() {
                     @Override
                     public void success(Result<List<Tweet>> listResult) {
                         DictionaryService ds = new DictionaryService(getActivity());
@@ -121,23 +122,23 @@ public class Landing extends ActionBarActivity {
                         List<String> contents = ds.getAllItems();
                         for (final Tweet tweet : tweets) {
                             for (String vulgar: contents) {
-                                if (Pattern.compile(Pattern.quote(tweet.text), Pattern.CASE_INSENSITIVE).matcher(vulgar).find()) {
+                                if (tweet.text.toLowerCase().contains(vulgar)) {
+                                    TweetUtils.loadTweet(tweet.id, new LoadCallback<Tweet>() {
+                                        @Override
+                                        public void success(Tweet tweet) {
+                                            FrameLayout rel = (FrameLayout) getActivity().findViewById(R.id.landing_fragment_layout);
+                                            rel.addView(new TweetView(getActivity(), tweet));
+                                        }
+
+                                        @Override
+                                        public void failure(TwitterException e) {
+                                            Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
+                                        }
+                                    });
                                     statusesService.destroy(tweet.id, false, new Callback<Tweet>() {
                                         @Override
                                         public void success(Result<Tweet> tweetResult) {
-                                            TweetUtils.loadTweet(tweet.id, new LoadCallback<Tweet>() {
-                                                @Override
-                                                public void success(Tweet tweet) {
-                                                    RelativeLayout rel = (RelativeLayout) getActivity().findViewById(R.id.landing_fragment_layout);
-                                                    rel.addView(new TweetView(
-                                                            getActivity(), tweet));
-                                                }
 
-                                                @Override
-                                                public void failure(TwitterException exception) {
-                                                    // Toast.makeText(...).show();
-                                                }
-                                            });
                                         }
 
                                         @Override
