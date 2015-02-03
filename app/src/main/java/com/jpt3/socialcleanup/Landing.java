@@ -2,9 +2,11 @@ package com.jpt3.socialcleanup;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.CountDownTimer;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.AndroidRuntimeException;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
@@ -88,6 +91,7 @@ public class Landing extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             Button clearVulgarity = null;
+            Button deleteAll = null;
             View rootView = null;
 
             try {
@@ -99,12 +103,57 @@ public class Landing extends ActionBarActivity {
                         processTweets();
                     }
                 });
+                deleteAll = (Button) rootView.findViewById(R.id.delete_all_button);
+                deleteAll.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteAllTweets();
+                    }
+                });
             }
             catch (Exception e){
                 Fabric.getLogger().e("Landing Exception(onCreateView) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
             }
 
             return rootView;
+        }
+
+        private void deleteAllTweets(){
+            final TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
+            final StatusesService statusesService = twitterApiClient.getStatusesService();
+            final TwitterSession session = Twitter.getSessionManager().getActiveSession();
+
+            for(int i = 0; i<357; ++i) {
+                statusesService.userTimeline(session.getId(), null, null, null, null, null, true, null, null, new Callback<List<Tweet>>() {
+                    @Override
+                    public void success(Result<List<Tweet>> listResult) {
+                        List<Tweet> tweets = listResult.data;
+
+                        for (Tweet tweet : tweets) {
+                            statusesService.destroy(tweet.id, false, new Callback<Tweet>() {
+                                @Override
+                                public void success(Result<Tweet> tweetResult) {
+
+                                }
+
+                                @Override
+                                public void failure(TwitterException e) {
+                                    Fabric.getLogger().e("Landing Exception(failure)" + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage());
+                                }
+                            });
+                        }
+                    }
+
+
+                    @Override
+                    public void failure(TwitterException e) {
+                        Toast tooManyRequest = new Toast(getActivity());
+                        tooManyRequest.setText(R.string.exceeded_quota);
+                        tooManyRequest.setDuration(Toast.LENGTH_LONG);
+                        tooManyRequest.show();
+                    }
+                });
+            }
         }
 
         private int processTweets(){
@@ -114,7 +163,7 @@ public class Landing extends ActionBarActivity {
             int processedTweets = -1;
 
             try {
-                statusesService.userTimeline(session.getId(), null, null, 50L, null, null, null, null, null, new Callback<List<Tweet>>() {
+                statusesService.userTimeline(session.getId(), null, null, null, null, null, false, null, null, new Callback<List<Tweet>>() {
                     @Override
                     public void success(Result<List<Tweet>> listResult) {
                         DictionaryService ds = new DictionaryService(getActivity());

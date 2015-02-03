@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -6,20 +6,29 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:id="@+id/landing_fragment_layout"
     tools:context="com.jpt3.socialcleanup.Landing$PlaceholderFragment"
-    android:background="#ff38b0ff">
-
-    <TextView
-        android:id="@+id/landing_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    android:background="#ff38b0ff"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/clear_twitter_vulgarity"
+        android:text="@string/delete_Vulgar"
         android:id="@+id/vulgar_button"
+        android:background="#ff60acf3"
+        android:layout_gravity="center"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:background="#ff60acf3" />
+        />
 
-</FrameLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/delete_all"
+        android:id="@+id/delete_all"
+        android:background="#ff60acf3"
+        android:layout_above="@+id/delete_all_button"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center" />
+
+</LinearLayout>
