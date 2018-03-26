@@ -46,6 +46,8 @@ public class Landing extends ActionBarActivity {
             setContentView(R.layout.activity_landing);
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction().add(R.id.container, new PlaceholderFragment()).commit();
+            } else {
+                throw new IllegalStateException("Saved instance must be null.");   
             }
         }
         catch (Exception e){
@@ -68,10 +70,9 @@ public class Landing extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = -1;
 
         try {
-            id = item.getItemId();
+            int id = item.getItemId();
             if (id == R.id.action_settings) {
                 return true;
             }
@@ -80,6 +81,7 @@ public class Landing extends ActionBarActivity {
             Fabric.getLogger().e("Landing Exception(onOptionsItemSelected) "  + Thread.currentThread().getStackTrace()[2].getLineNumber(), e.getMessage(), e);
         }
         return super.onOptionsItemSelected(item);
+        
     }
 
     public static class PlaceholderFragment extends Fragment {
