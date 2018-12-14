@@ -19,8 +19,8 @@ import com.twitter.sdk.android.tweetui.TweetUi;
 
 public class MainActivity extends ActionBarActivity {
 
-    private static final String TWITTER_KEY = "5itdtl3F7tUUECjNoMPfoileR";
-    private static final String TWITTER_SECRET = "tpMxSWJBehMVyNiAEfHi8isFxQ4P3ZGio0jARZ4R0cvdd9ZCvu";
+    private static final String TWITTER_KEY = "key";
+    private static final String TWITTER_SECRET = "secret";
     private TwitterLoginButton loginButton;
 
     @Override
